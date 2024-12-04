@@ -1,0 +1,23 @@
+dataset_params:
+  train_batch_size: 50
+  val_batch_size: 4000
+  test_batch_size: 2400
+  train_num_workers: 3
+  val_num_workers: 1
+  test_num_workers: 1
+
+experiment_params:
+  max_epochs: 1000
+  conv_ae_lr: 0.0001
+  mlp_lr: 0.0001
+  lstm_lr: 0.0001
+  sch_T_0: 10
+  sch_T_mult: 2
+  mlp_weight: 0.0
+  mlp_weight_mode: "constant"
+
+logging_params:
+  recon_type: "ae"
+  recon_number: 1
+  pred_type: "lstm"
+  pred_number: 1
