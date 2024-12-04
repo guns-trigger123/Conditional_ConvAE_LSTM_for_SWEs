@@ -69,7 +69,8 @@ if __name__ == '__main__':
             if isConditional:
                 R_0, Hp_0 = batch["R"].reshape(-1, 1, 1) / 40.0, batch["Hp"].reshape(-1, 1, 1) / 20.0
                 R, Hp = R_0.repeat(1, 5, 1), Hp_0.repeat(1, 5, 1)
-                batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                # batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                batch_concate = R.to(device)
                 batch_sup_weight = Hp_0.squeeze(2).to(device)
                 batch_input = torch.cat([batch_input, batch_concate], dim=2)
                 batch_pred = lstm(batch_input, batch_sup_weight)
@@ -107,7 +108,8 @@ if __name__ == '__main__':
             if isConditional:
                 R_0, Hp_0 = batch["R"].reshape(-1, 1, 1) / 40.0, batch["Hp"].reshape(-1, 1, 1) / 20.0
                 R, Hp = R_0.repeat(1, 5, 1), Hp_0.repeat(1, 5, 1)
-                batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                # batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                batch_concate = R.to(device)
                 batch_sup_weight = Hp_0.squeeze(2).to(device)
                 batch_input = torch.cat([batch_input, batch_concate], dim=2)
                 batch_pred = lstm(batch_input, batch_sup_weight)
