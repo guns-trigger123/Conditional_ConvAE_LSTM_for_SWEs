@@ -22,7 +22,8 @@ def mae(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, rollo
             if isConditional:
                 R_0, Hp_0 = batch_latent["R"].reshape(-1, 1, 1) / 40.0, batch_latent["Hp"].reshape(-1, 1, 1) / 20.0
                 R, Hp = R_0.repeat(1, 5, 1), Hp_0.repeat(1, 5, 1)
-                batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                # batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                batch_concate = R.to(device)
                 batch_sup_weight = Hp_0.squeeze(2).to(device)
                 batch_latent_input = torch.cat([batch_latent_input, batch_concate], dim=2)
                 batch_latent_pred = lstm(batch_latent_input, batch_sup_weight).detach().squeeze()
@@ -32,7 +33,8 @@ def mae(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, rollo
             if isConditional:
                 R_0, Hp_0 = batch_latent["R"].reshape(-1, 1, 1) / 40.0, batch_latent["Hp"].reshape(-1, 1, 1) / 20.0
                 R, Hp = R_0.repeat(1, 5, 1), Hp_0.repeat(1, 5, 1)
-                batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                # batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                batch_concate = R.to(device)
                 batch_sup_weight = Hp_0.squeeze(2).to(device)
                 batch_latent_input = torch.cat([batch_latent_input, batch_concate], dim=2)
                 batch_latent_pred = lstm(batch_latent_input, batch_sup_weight).detach()
@@ -96,7 +98,8 @@ def ssim(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
             if isConditional:
                 R_0, Hp_0 = batch_latent["R"].reshape(-1, 1, 1) / 40.0, batch_latent["Hp"].reshape(-1, 1, 1) / 20.0
                 R, Hp = R_0.repeat(1, 5, 1), Hp_0.repeat(1, 5, 1)
-                batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                # batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                batch_concate = R.to(device)
                 batch_sup_weight = Hp_0.squeeze(2).to(device)
                 batch_latent_input = torch.cat([batch_latent_input, batch_concate], dim=2)
                 batch_latent_pred = lstm(batch_latent_input, batch_sup_weight).detach().squeeze()
@@ -106,7 +109,8 @@ def ssim(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
             if isConditional:
                 R_0, Hp_0 = batch_latent["R"].reshape(-1, 1, 1) / 40.0, batch_latent["Hp"].reshape(-1, 1, 1) / 20.0
                 R, Hp = R_0.repeat(1, 5, 1), Hp_0.repeat(1, 5, 1)
-                batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                # batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                batch_concate = R.to(device)
                 batch_sup_weight = Hp_0.squeeze(2).to(device)
                 batch_latent_input = torch.cat([batch_latent_input, batch_concate], dim=2)
                 batch_latent_pred = lstm(batch_latent_input, batch_sup_weight).detach()
@@ -162,7 +166,8 @@ def psnr(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
             if isConditional:
                 R_0, Hp_0 = batch_latent["R"].reshape(-1, 1, 1) / 40.0, batch_latent["Hp"].reshape(-1, 1, 1) / 20.0
                 R, Hp = R_0.repeat(1, 5, 1), Hp_0.repeat(1, 5, 1)
-                batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                # batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                batch_concate = R.to(device)
                 batch_sup_weight = Hp_0.squeeze(2).to(device)
                 batch_latent_input = torch.cat([batch_latent_input, batch_concate], dim=2)
                 batch_latent_pred = lstm(batch_latent_input, batch_sup_weight).detach().squeeze()
@@ -172,7 +177,8 @@ def psnr(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
             if isConditional:
                 R_0, Hp_0 = batch_latent["R"].reshape(-1, 1, 1) / 40.0, batch_latent["Hp"].reshape(-1, 1, 1) / 20.0
                 R, Hp = R_0.repeat(1, 5, 1), Hp_0.repeat(1, 5, 1)
-                batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                # batch_concate = torch.cat([R, Hp], dim=2).to(device)
+                batch_concate = R.to(device)
                 batch_sup_weight = Hp_0.squeeze(2).to(device)
                 batch_latent_input = torch.cat([batch_latent_input, batch_concate], dim=2)
                 batch_latent_pred = lstm(batch_latent_input, batch_sup_weight).detach()
@@ -222,10 +228,10 @@ if __name__ == '__main__':
         test_num_workers: 1
     '''
     # configuration
-    device = torch.device('cuda:5')
+    device = torch.device('cuda:0')
     config = yaml.load(open("config.yaml", "r"), Loader=yaml.FullLoader)
     # model name
-    recon_type, pred_type = "ae", "lstm"
+    recon_type, pred_type = "ae", "conditional_lstm"
     recon_number, pred_number = "1", "1"
     conv_ae_name, pred_model_name = f"{recon_type}_{recon_number}", f"{pred_type}_{pred_number}"
     print(f"{conv_ae_name} {pred_model_name}")

@@ -97,8 +97,8 @@ if __name__ == '__main__':
     # load dataset
     test_dataset, test_dataloader = init_recon_data(config, "test")
     # load saved model
-    SAVED_DIRECTORY = f"./saved_models/latent128/conditional_ae_3/"
-    SAVED_PREFIX = "conditional_ae"
+    SAVED_DIRECTORY = f"./saved_models/latent128/ae_1/"
+    SAVED_PREFIX = "ae"
     best_epoch = torch.load(SAVED_DIRECTORY + f"{SAVED_PREFIX}_best_epoch.pt")
     print(f"best epoch: {best_epoch}")
     conv_ae, _ = init_recon_model()

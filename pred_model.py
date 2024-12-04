@@ -32,7 +32,8 @@ class ConditionalLSTMPredictor(nn.Module):
         super(ConditionalLSTMPredictor, self).__init__()
         input_size = 128
         hidden_size = 256
-        self.num_conditional = 2
+        # self.num_conditional = 2
+        self.num_conditional = 1
         self.predict_timestep = 5
 
         self.lstm = nn.LSTM(
