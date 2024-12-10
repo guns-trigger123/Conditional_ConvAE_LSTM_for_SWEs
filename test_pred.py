@@ -86,13 +86,13 @@ def ssim(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
     lstm.eval()
     conv_ae.eval()
     # init ssim_calculator & ssim list
-    ssim_calculator = StructuralSimilarityIndexMeasure(data_range=1.0)
+    ssim_calculator = StructuralSimilarityIndexMeasure(data_range=1.0).to(device)
     ssim_values = []
     for iter, (batch_latent, batch_recon) in enumerate(zip(latent_dataloader, recon_dataloader)):
         # latent input & labels
         batch_latent_input, batch_latent_labels = batch_latent["input"].to(device), batch_latent["target"].to(device)
         # recon labels
-        batch_recon_labels = batch_recon["target"].to(device)
+        batch_recon_labels = batch_recon["target"].to(device).reshape(-1, 3, 128, 128)
         # pred latent forward
         if rollout == False:
             if isConditional:
@@ -127,10 +127,10 @@ def ssim(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
         latent_dim = batch_latent_labels.shape[2]
         # recon forward
         batch_recon_pred = conv_ae.decoder(batch_latent_pred.reshape(batch_size * target_len, latent_dim)).detach()
-        batch_recon_pred = batch_recon_pred.reshape(batch_size, target_len, 3, 128, 128)
+        batch_recon_pred = batch_recon_pred.reshape(batch_size * target_len, 3, 128, 128)
         # compute recon ssim
-        batch_recon_pred = batch_recon_pred.detach().cpu()
-        batch_recon_labels = batch_recon_labels.cpu()
+        batch_recon_pred = batch_recon_pred.detach()
+        batch_recon_labels = batch_recon_labels
         print(f"batch_recon_pred shape: {batch_recon_pred.shape}")
         ssim_value = ssim_calculator(batch_recon_pred, batch_recon_labels)
         ssim_values.append(ssim_value.unsqueeze(0))
@@ -160,7 +160,7 @@ def psnr(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
         # latent input & labels
         batch_latent_input, batch_latent_labels = batch_latent["input"].to(device), batch_latent["target"].to(device)
         # recon labels
-        batch_recon_labels = batch_recon["target"].to(device)
+        batch_recon_labels = batch_recon["target"].to(device).reshape(-1, 3, 128, 128)
         # pred latent forward
         if rollout == False:
             if isConditional:
@@ -195,7 +195,7 @@ def psnr(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
         latent_dim = batch_latent_labels.shape[2]
         # recon forward
         batch_recon_pred = conv_ae.decoder(batch_latent_pred.reshape(batch_size * target_len, latent_dim)).detach()
-        batch_recon_pred = batch_recon_pred.reshape(batch_size, target_len, 3, 128, 128)
+        batch_recon_pred = batch_recon_pred.reshape(batch_size * target_len, 3, 128, 128)
         # compute recon psnr
         batch_recon_pred = batch_recon_pred.detach().cpu()
         batch_recon_labels = batch_recon_labels.cpu()
@@ -221,10 +221,10 @@ def psnr(conv_ae, lstm, recon_dataloader, latent_dataloader, isConditional, roll
 if __name__ == '__main__':
     '''
     dataset_params for recon test:
-        test_batch_size for mae: 2292
-        test_batch_size foe ssim & psnr: 764
-        test_batch_size for rollout mae: 2232
-        test_batch_size foe rollout ssim & psnr: 744
+        test_batch_size for mae: 764
+        test_batch_size foe ssim & psnr: 382
+        test_batch_size for rollout mae: 744
+        test_batch_size foe rollout ssim & psnr: 372
         test_num_workers: 1
     '''
     # configuration
@@ -232,7 +232,7 @@ if __name__ == '__main__':
     config = yaml.load(open("config.yaml", "r"), Loader=yaml.FullLoader)
     # model name
     recon_type, pred_type = "ae", "conditional_lstm"
-    recon_number, pred_number = "1", "1"
+    recon_number, pred_number = "2", "2"
     conv_ae_name, pred_model_name = f"{recon_type}_{recon_number}", f"{pred_type}_{pred_number}"
     print(f"{conv_ae_name} {pred_model_name}")
     # load saved conv_ae
@@ -262,6 +262,6 @@ if __name__ == '__main__':
     # psnr(conv_ae, lstm, recon_standard_dataloader, latent_standard_dataloader, isConditional, rollout=False)
 
     # compute metrics for rollout pred
-    # mae(conv_ae, lstm, recon_standard_dataloader, latent_standard_dataloader, isConditional, rollout=True)
-    # ssim(conv_ae, lstm, recon_standard_dataloader, latent_standard_dataloader, isConditional, rollout=True)
-    # psnr(conv_ae, lstm, recon_standard_dataloader, latent_standard_dataloader, isConditional, rollout=True)
+    # mae(conv_ae, lstm, recon_rollout_dataloader, latent_rollout_dataloader, isConditional, rollout=True)
+    # ssim(conv_ae, lstm, recon_rollout_dataloader, latent_rollout_dataloader, isConditional, rollout=True)
+    # psnr(conv_ae, lstm, recon_rollout_dataloader, latent_rollout_dataloader, isConditional, rollout=True)
